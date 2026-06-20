@@ -5,6 +5,8 @@ import os
 from PIL import Image
 import pytesseract
 from ocr import extract_aadhaar_data
+from crud import insert_record
+from database import SessionLocal
 
 app=FastAPI()
 Uploads_dir="uploads"
@@ -14,12 +16,15 @@ pytesseract.pytesseract.tesseract_cmd=r"C:\Program Files\Tesseract-OCR\tesseract
 @app.post("/upload-aadhaar") 
 async def upload_aadhaar(file: UploadFile =File(...)):
     file_path = os.path.join(Uploads_dir,file.filename)
+    db = SessionLocal()
 
     with open (file_path,"wb") as buffer :
         shutil.copyfileobj(file.file,buffer)
     image=Image.open(file_path)
     text = pytesseract.image_to_string(image)
     parsed = extract_aadhaar_data(text)
+    insert_record(db, parsed)
+    db.close()
     return{
         "filename":file.filename,
         "extracted text":text,
