@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tenant Data</title>
-    <link rel="stylesheet" href="style.css">
+    <title>TENANTDATA</title>
 </head>
+
 <body>
 
-<h1>Tenant Data Management</h1>
+    <h1>Upload the Aadhaar Image</h1>
 
-<form id="tenantForm">
-    <input type="text" id="name" placeholder="Tenant Name" required>
-    <input type="text" id="phone" placeholder="Phone Number" required>
-    <button type="submit">Add Tenant</button>
-</form>
+    <!-- ADD FILE INPUT (missing in your code) -->
+    <input type="file" id="imageInput" accept="image/*">
 
-<hr>
+    <br><br>
 
-<button id="loadBtn">Load Tenants</button>
+    <img id="Preview" width="300" style="display: none;">
 
-<input type="text" id="search" placeholder="Search by name">
+    <br><br>
 
-<div id="tenantList"></div>
+    <button onclick="uploadImage()">Upload</button>
 
-<script src="script.js"></script>
+    <script>
+        const imageInput = document.getElementById("imageInput");
+        const Preview = document.getElementById("Preview");
+
+        // FIX: files (not file)
+        imageInput.addEventListener("change", function () {
+            const file = this.files[0];
+
+            if (file) {
+                Preview.src = URL.createObjectURL(file);
+                Preview.style.display = "block";
+            }
+        });
+
+        async function uploadImage() {
+            // FIX: files (not file)
+            const file = imageInput.files[0];
+
+            if (!file) {
+                alert("Please select an image");
+                return;
+            }
+
+            // FIX: FormData (capital F and D)
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8000/upload-adhaar",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+                const result = await response.json();
+                console.log(result);
+                alert("Upload successful!");
+            }
+            catch (error) {
+                console.error(error);
+                alert("Upload failed");
+            }
+        }
+    </script>
+
 </body>
 </html>
