@@ -14,3 +14,4 @@ Python
 React (Frontend - optional)
 Tesseract OCR (future)
 OpenCV (future)
+with features like smartroom allotment rent payment features
